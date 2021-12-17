@@ -2,15 +2,15 @@ package record
 
 import (
 	"bufio"
-	"bytes"
 	"errors"
+	"io"
 )
 
 type Scanner struct {
 	*bufio.Scanner
 }
 
-func NewScanner(r *bytes.Reader, maxScanTokenSize int) (*Scanner, error) {
+func NewScanner(r io.Reader, maxScanTokenSize int) (*Scanner, error) {
 	scanner := bufio.NewScanner(r)
 	buf := make([]byte, 4096)
 	scanner.Buffer(buf, maxScanTokenSize+metaLength)

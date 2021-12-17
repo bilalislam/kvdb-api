@@ -30,4 +30,8 @@ func TestSimpleSetGet(t *testing.T) {
 	require.NoError(t, err)
 	err = store.Set(testKey, []byte(testValue))
 	require.NoError(t, err)
+
+	data, err := store.Get(testKey)
+	require.NoError(t, err)
+	require.Equal(t, []byte(testValue), data)
 }

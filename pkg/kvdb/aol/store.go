@@ -72,6 +72,37 @@ func NewStore(config Config) (*Store, error) {
 	}, nil
 }
 
+func (s *Store) Get(key string) ([]byte, error) {
+	file, err := os.Open(s.storagePath)
+	defer file.Close()
+	if err != nil {
+		return nil, fmt.Errorf("could not open file: %s, %w", s.storagePath, err)
+	}
+
+	scanner, err := record.NewScanner(file, s.maxRecordSize)
+	if err != nil {
+		return nil, fmt.Errorf("could not create scanner for file: %s, %w", s.storagePath, err)
+	}
+
+	var found *record.Record
+	for scanner.Scan() {
+		record := scanner.Record()
+		if record.Key() == key {
+			found = record
+		}
+	}
+
+	if scanner.Err() != nil {
+		s.logger.Printf("error encountered : %s", scanner.Err())
+	}
+
+	if found == nil || found.IsTombstone() {
+		return nil, kvdb.NewNotFoundError(key)
+	}
+
+	return found.Value(), nil
+}
+
 func (s *Store) Set(key string, value []byte) error {
 	record := record.NewValue(key, value)
 	return s.append(record)
