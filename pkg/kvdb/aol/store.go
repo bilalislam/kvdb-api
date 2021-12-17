@@ -73,7 +73,7 @@ func NewStore(config Config) (*Store, error) {
 }
 
 func (s *Store) Get(key string) ([]byte, error) {
-	file, err := os.Open(s.storagePath)
+	file, err := os.OpenFile(s.storagePath, os.O_CREATE, 0600)
 	defer file.Close()
 	if err != nil {
 		return nil, fmt.Errorf("could not open file: %s, %w", s.storagePath, err)
@@ -133,4 +133,20 @@ func (s *Store) append(record *record.Record) error {
 	}
 
 	return file.Close()
+}
+
+func (s *Store) Close() error {
+	s.logger.Print("Closing database")
+	return nil
+}
+func (s *Store) Flush() error {
+	return os.Remove(s.storagePath)
+}
+
+func (s *Store) IsNotFoundError(err error) bool {
+	return kvdb.IsNotFoundError(err)
+}
+
+func (s *Store) IsBadRequestError(err error) bool {
+	return kvdb.IsBadRequestError(err)
 }
