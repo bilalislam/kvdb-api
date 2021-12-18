@@ -9,7 +9,6 @@ import (
 type Store interface {
 	Get(key string) ([]byte, error)
 	Set(key string, value []byte) error
-	Flush() error
 	Close() error
 	IsNotFoundError(err error) bool
 	IsBadRequestError(err error) bool

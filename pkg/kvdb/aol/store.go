@@ -207,9 +207,6 @@ func (s *Store) Close() error {
 	s.logger.Print("Closing database")
 	return nil
 }
-func (s *Store) Flush() error {
-	return os.Remove(s.storagePath)
-}
 
 func (s *Store) IsNotFoundError(err error) bool {
 	return kvdb.IsNotFoundError(err)

@@ -86,17 +86,6 @@ func startHTTPServer(port int, logger *log.Logger, db kvdb.Store) *http.Server {
 			w.Write(val)
 
 		case http.MethodPut, http.MethodPost:
-
-			if key == "flush" {
-				err := db.Flush()
-				if err != nil {
-					handleError(w, r, logger, err)
-					return
-				}
-
-				return
-			}
-
 			data, err := ioutil.ReadAll(r.Body)
 			if err != nil {
 				handleError(w, r, logger, err)
