@@ -17,7 +17,7 @@ import (
 
 const (
 	defaultPort          = 8080
-	defaultBasePath      = "/Users/bilal.islam/Documents/"
+	defaultBasePath      = "/tmp"
 	defaultMaxRecordSize = 64 * 1024
 )
 

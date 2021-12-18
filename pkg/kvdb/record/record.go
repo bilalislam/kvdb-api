@@ -29,20 +29,11 @@ type Record struct {
 	value []byte
 }
 
-//NewValue returns a new record of value kind
 func NewValue(key string, value []byte) *Record {
 	return &Record{
 		kind:  valueKind,
 		key:   key,
 		value: value,
-	}
-}
-
-func NewTombstone(key string) *Record {
-	return &Record{
-		kind:  tombstoneKind,
-		key:   key,
-		value: []byte{},
 	}
 }
 
@@ -52,10 +43,6 @@ func (r *Record) Key() string {
 
 func (r *Record) Value() []byte {
 	return r.value
-}
-
-func (r *Record) IsTombstone() bool {
-	return r.kind == tombstoneKind
 }
 
 func (r *Record) ToBytes() []byte {
@@ -79,8 +66,6 @@ func (r *Record) ToBytes() []byte {
 	return append(crcData, data...)
 }
 
-// FromBytes deserialize []byte into a record. If the data cannot be
-// deserialized a wrapped ErrParse error will be returned.
 func FromBytes(data []byte) (*Record, error) {
 	if len(data) < metaLength {
 		return nil, ErrInsufficientData
@@ -116,7 +101,6 @@ func FromBytes(data []byte) (*Record, error) {
 	return &Record{kind: kind, key: string(key), value: val}, nil
 }
 
-// Size returns the serialized byte size
 func (r *Record) Size() int {
 	return crcLen + kindByteSize + keyLenByteSize + valLenByteSize + len(r.key) + len(r.value)
 }

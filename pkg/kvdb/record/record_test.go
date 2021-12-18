@@ -23,18 +23,6 @@ func TestToFromValueKind(t *testing.T) {
 	require.Equal(t, value, string(r.value))
 }
 
-func TestToFromTombstoneKind(t *testing.T) {
-	key := "key1"
-	record := NewTombstone(key)
-
-	data := record.ToBytes()
-	r, err := FromBytes(data)
-
-	require.NoError(t, err)
-	require.Equal(t, key, r.Key())
-	require.True(t, r.IsTombstone())
-}
-
 func TestFromBytesReturnsErrInsufficientDataIfNotEnoughDataIsProvided(t *testing.T) {
 	_, err := FromBytes([]byte{0x00, 0x1})
 
