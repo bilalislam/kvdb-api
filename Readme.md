@@ -94,5 +94,7 @@ Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
 # References
 
 [(Back to top)](#table-of-contents)
+1. https://redis.io/topics/persistence
+2. http://oldblog.antirez.com/post/redis-persistence-demystified.html
 
 
