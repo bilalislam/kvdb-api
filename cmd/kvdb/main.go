@@ -19,6 +19,7 @@ const (
 	defaultPort          = 8080
 	defaultBasePath      = "/tmp"
 	defaultMaxRecordSize = 64 * 1024
+	defaultInterval      = 1
 )
 
 var (
@@ -26,6 +27,7 @@ var (
 	basePath      string
 	maxRecordSize int
 	async         bool
+	interval      int
 )
 
 func init() {
@@ -33,12 +35,12 @@ func init() {
 	flag.StringVar(&basePath, "path", defaultBasePath, "storage path")
 	flag.IntVar(&maxRecordSize, "maxRecordSize", defaultMaxRecordSize, "max size of a database record")
 	flag.BoolVar(&async, "async", async, "file sync for durability")
+	flag.IntVar(&interval, "interval", defaultInterval, "default every second (1s)")
 }
 func main() {
 	flag.Parse()
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	async := true // interval ile olmalı
 
 	db, err := aol.NewStore(aol.Config{
 		BasePath:      basePath,
@@ -51,6 +53,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
+	syncByInterval(db, logger)
 	server := startHTTPServer(httpPort, logger, db)
 
 	stop := make(chan os.Signal, 1)
@@ -61,6 +64,24 @@ func main() {
 	if err := db.Close(); err != nil {
 		logger.Printf("Could not close database, %s", err)
 	}
+
+}
+
+func syncByInterval(db *aol.Store, logger *log.Logger) {
+	ticker := time.NewTicker(time.Duration(interval) * time.Second)
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				logger.Printf("sync to disk by interval  %d seconds", interval)
+				db.Sync()
+			case <-quit:
+				ticker.Stop()
+				return
+			}
+		}
+	}()
 }
 
 func startHTTPServer(port int, logger *log.Logger, db kvdb.Store) *http.Server {
@@ -96,8 +117,6 @@ func startHTTPServer(port int, logger *log.Logger, db kvdb.Store) *http.Server {
 			if err != nil {
 				handleError(w, r, logger, err)
 				return
-			} else {
-				db.Sync() // sync by interval
 			}
 
 			w.WriteHeader(http.StatusCreated)
