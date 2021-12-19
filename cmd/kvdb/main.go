@@ -92,9 +92,12 @@ func startHTTPServer(port int, logger *log.Logger, db kvdb.Store) *http.Server {
 				return
 			}
 
-			if err := db.Set(key, data); err != nil {
+			err = db.Set(key, data)
+			if err != nil {
 				handleError(w, r, logger, err)
 				return
+			} else {
+				db.Sync()
 			}
 
 			w.WriteHeader(http.StatusCreated)
