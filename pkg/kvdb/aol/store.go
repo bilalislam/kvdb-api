@@ -142,12 +142,6 @@ func (s *Store) Set(key string, value []byte) error {
 	return nil
 }
 
-/*
- * interval timer ile buffer'ı oku
- * sync et
- * buffer'ı sil
- */
-
 func (s *Store) Sync() error {
 	s.index.mutex.RLock()
 	defer s.index.mutex.RUnlock()

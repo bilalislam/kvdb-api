@@ -97,7 +97,7 @@ func startHTTPServer(port int, logger *log.Logger, db kvdb.Store) *http.Server {
 				handleError(w, r, logger, err)
 				return
 			} else {
-				db.Sync()
+				db.Sync() // sync by interval
 			}
 
 			w.WriteHeader(http.StatusCreated)
