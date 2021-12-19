@@ -1,15 +1,11 @@
 # Key-Value Rest Api
 
 
-
-
 # Table of contents
 
 - [Table of contents](#table-of-contents)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Known Issues](#known-issues)
-- [Architecure](#architecure)
 - [References](#references)
 
 # Installation
@@ -30,6 +26,24 @@ To use this project, first clone the repo on your device using the command below
 ```sh
 $ cd kvdb
 $ go build main.go -o kvdb-api
+$ ./kvdb-api --help
+```
+
+### `help`
+You can print  help following below;
+
+```sh
+
+  -async
+        file sync for durability
+  -interval int
+        default every second (1s) (default 1)
+  -maxRecordSize int
+        max size of a database record (default 65536)
+  -path string
+        storage path (default "/tmp")
+  -port int
+        http server listening port (default 8080)
 ```
 
 ### `api start`
@@ -43,6 +57,14 @@ Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
+
+### `http sample`
+
+```sh
+$ curl -X POST -H "Content-Type: application/json" -d '{"foo":"bar"}' http://localhost:8080/foo
+$ curl -X GET http://localhost:8080/foo
+```
+
 
 ### `unit test`
 
@@ -80,15 +102,6 @@ $ docker-compose up
 
 Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
 
-
-# Known Issues
-
-[(Back to top)](#table-of-contents)
-
-
-# Architecure
-
-[(Back to top)](#table-of-contents)
 
 
 # References
