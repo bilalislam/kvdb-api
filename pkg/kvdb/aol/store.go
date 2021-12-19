@@ -49,14 +49,16 @@ func (i *index) get(key string) (string, bool) {
 	return val, ok
 }
 
-func (i *index) put(key string, value string) {
+func (i *index) put(key string, value string, bootLoader bool) {
 	i.mutex.Lock()
 	defer i.mutex.Unlock()
 	i.table[key] = value
-	i.buffer[key] = value
+	if !bootLoader {
+		i.buffer[key] = value
+	}
 }
 
-func buildIndex(filePath string, maxRecordSize int) (*index, error) {
+func buildIndex(filePath string, maxRecordSize int, bootLoader bool) (*index, error) {
 	idx := index{
 		table:  map[string]string{},
 		buffer: map[string]string{},
@@ -75,7 +77,7 @@ func buildIndex(filePath string, maxRecordSize int) (*index, error) {
 
 	for scanner.Scan() {
 		record := scanner.Record()
-		idx.put(record.Key(), string(record.Value()))
+		idx.put(record.Key(), string(record.Value()), bootLoader)
 	}
 
 	if scanner.Err() != nil {
@@ -110,7 +112,7 @@ func NewStore(config Config) (*Store, error) {
 		logger = config.Logger
 	}
 
-	idx, err := buildIndex(storagePath, maxRecordSize)
+	idx, err := buildIndex(storagePath, maxRecordSize, true)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +138,7 @@ func (s *Store) Get(key string) ([]byte, error) {
 }
 
 func (s *Store) Set(key string, value []byte) error {
-	s.index.put(key, string(value))
+	s.index.put(key, string(value), false)
 	return nil
 }
 
