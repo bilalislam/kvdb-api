@@ -4,6 +4,10 @@ services:
   api:
     build:
       context: .
-      dockerfile: tools/Dockerfile
+      dockerfile: tools/dockerfile
     ports:
       - "8080:8080"
+    environment:
+      async: "false"
+      interval: 5
+      basePath: "/tmp"
