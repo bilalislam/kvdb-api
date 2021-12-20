@@ -8,6 +8,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-      async: "false"
       interval: 5
-      basePath: "/tmp"
+      async: "false"
+      basePath: "/var"

@@ -1,4 +1,10 @@
 FROM golang:latest as builder
+
+
+ENV interval=1
+ENV async=false
+ENV basePath=/tmp
+
 RUN mkdir -p /app
 WORKDIR /app
 ENV GO111MODULE on
@@ -14,5 +20,5 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /app .
 # Execite application when container is started
 EXPOSE 80/tcp
-CMD ["./main"]
+CMD ./main -interval ${interval} -async ${async} -basePath ${basePath}
 EXPOSE 8080
